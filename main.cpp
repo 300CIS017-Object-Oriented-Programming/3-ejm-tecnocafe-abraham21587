@@ -1,16 +1,16 @@
 #include <iostream>
-
-#include "Cafe.h"
 #include <string>
-#include <iomanip>  // Formateo de punto flotante
-#include <iostream>
+#include <iomanip>  // Para formatear decimales con setprecision
+#include "Cafe.h"
 
 using std::cout;
 using std::cin;
 using std::fixed;
 using std::setprecision;
 
-
+/**
+ * @brief Muestra el menú principal de la aplicación.
+ */
 void mostrarMenuPrincipal()
 {
     cout << "===== TecnoCafe - Menu Principal =====\n";
@@ -18,17 +18,23 @@ void mostrarMenuPrincipal()
     cout << "2. Ver resumen del pedido\n";
     cout << "3. Finalizar y pagar\n";
     cout << "4. Prediligenciar productos de demostracion\n";
+    cout << "5. Mostrar producto mas caro del pedido\n";
+    cout << "6. Eliminar un producto del pedido\n";
     cout << "-1. Salir\n";
     cout << "Seleccione una opcion: ";
 }
 
+/**
+ * @brief Lee la opción del usuario en el menú principal con validación.
+ * @return La opción elegida.
+ */
 int leerOpcionMenu()
 {
     int opcion;
     cin >> opcion;
-    while (opcion < 1 || opcion > 5)
+    while (!(opcion == -1 || (opcion >= 1 && opcion <= 6)))
     {
-        cout << "Opcion invalida. Intente de nuevo (1-4): ";
+        cout << "Opcion invalida. Intente de nuevo: ";
         cin.clear();
         cin.ignore(10000, '\n');
         cin >> opcion;
@@ -36,23 +42,16 @@ int leerOpcionMenu()
     return opcion;
 }
 
-
-
+/**
+ * @brief Función principal.
+ * Maneja el flujo general del programa.
+ */
 int main()
 {
-
-    // Estos son arreglos estáticos en C++ de tamaño fijo, una característica heredada de C.
-    // A diferencia de las listas en Python, los arreglos estáticos tienen un tamaño predefinido (MAX_ITEMS en este caso)
-    // que no puede cambiarse durante la ejecución del programa.
-    // Los elementos se acceden mediante índices, comenzando desde 0.
-    // Es importante asegurarse de no acceder a índices fuera del rango permitido, ya que esto puede causar errores graves (comportamiento indefinido).
+    // Arreglos estáticos para almacenar los productos del pedido
     int codigos[MAX_ITEMS] = {0};
     int cantidades[MAX_ITEMS] = {0};
-
-;
     int cantidadItemsRegistrados = 0;
-
-
 
     int opcion = 0;
     do
@@ -62,47 +61,52 @@ int main()
 
         switch (opcion)
         {
-        case 1:
-            {
-                registrarProducto(codigos, cantidades, cantidadItemsRegistrados);
-                break;
-            }
+        case 1: // Registrar producto
+            registrarProducto(codigos, cantidades, cantidadItemsRegistrados);
+            break;
 
-        case 2:
+        case 2: // Ver resumen
+        {
+            double subtotal = calcularSubtotalPedido(codigos, cantidades, cantidadItemsRegistrados);
+            cout << fixed << setprecision(2);
+            cout << "\nSubtotal actual: $" << subtotal << "\n\n";
+            break;
+        }
+
+        case 3: // Finalizar y pagar
+        {
+            if (cantidadItemsRegistrados == 0)
             {
-                double subtotal = calcularSubtotalPedido(codigos, cantidades, cantidadItemsRegistrados);
-                cout << fixed << setprecision(2);
-                cout << "\nSubtotal actual: $" << subtotal << "\n\n";
+                cout << "\nNo hay productos en el pedido.\n\n";
                 break;
             }
-        case 3:
-            {
-                if (cantidadItemsRegistrados == 0)
-                {
-                    cout << "\nNo hay productos en el pedido.\n\n";
-                    break;
-                }
-                double subtotal = calcularSubtotalPedido(codigos, cantidades, cantidadItemsRegistrados);
-                int tipoUsuario = leerTipoUsuario();
-                double porcentajeDescuento = obtenerPorcentajeDescuento(tipoUsuario);
-                mostrarResumenPedido(codigos, cantidades, cantidadItemsRegistrados, porcentajeDescuento);
-                double total = calcularTotal(subtotal, porcentajeDescuento);
-                //En C++, fixed es un manipulador de flujo que se utiliza con objetos de salida como std::cout para configurar el formato de los números de punto flotante. Cuando se usa fixed, los números de punto flotante se muestran en notación decimal fija en lugar de notación científica (la predeterminada para números muy grandes o pequeños).
-                cout << fixed << setprecision(2);
-                cout << "Total a pagar: $" << total << "\n\n";
-                break;
-            }
-        case 4:
-            {
-                prediligenciarProductosDemo(codigos, cantidades, cantidadItemsRegistrados);
-                break;
-            }
+            double subtotal = calcularSubtotalPedido(codigos, cantidades, cantidadItemsRegistrados);
+            int tipoUsuario = leerTipoUsuario();
+            double porcentajeDescuento = obtenerPorcentajeDescuento(tipoUsuario);
+
+            mostrarResumenPedido(codigos, cantidades, cantidadItemsRegistrados, porcentajeDescuento);
+            double total = calcularTotal(subtotal, porcentajeDescuento);
+
+            cout << fixed << setprecision(2);
+            cout << "Total a pagar: $" << total << "\n\n";
+            break;
+        }
+
+        case 4: // Demo
+            prediligenciarProductosDemo(codigos, cantidades, cantidadItemsRegistrados);
+            break;
+
+        case 5: // Producto más caro
+            mostrarProductoMasCaro(codigos, cantidades, cantidadItemsRegistrados);
+            break;
+
+        case 6: // Eliminar producto
+            eliminarProducto(codigos, cantidades, cantidadItemsRegistrados);
+            break;
 
         case -1:
-            {
-                cout << "\nSaliendo del sistema. ¡Hasta pronto!\n";
-                break;
-            }
+            cout << "\nSaliendo del sistema. ¡Hasta pronto!\n";
+            break;
         }
     }
     while (opcion != -1);

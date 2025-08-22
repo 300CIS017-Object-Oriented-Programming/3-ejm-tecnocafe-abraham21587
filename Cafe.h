@@ -51,6 +51,11 @@ const double DESCUENTO_PROFESOR = 0.05;
 const double DESCUENTO_VISITANTE = 0.00;
 
 /**
+ * @brief Descuento aplicado a administradores (20%).
+ */
+const double DESCUENTO_ADMIN = 0.20;
+
+/**
  * @brief Máximo número de ítems distintos que se pueden registrar en un pedido.
  */
 const int MAX_ITEMS = 50;
@@ -77,7 +82,7 @@ int leerCantidadProducto();
 /**
  * @brief Obtiene el precio de un producto dado su código.
  * @param codigoProducto Código del producto.
- * @return Precio del producto.
+ * @return Precio del producto (positivo o 0 si no existe).
  */
 int obtenerPrecioPorCodigo(int codigoProducto);
 
@@ -106,14 +111,14 @@ void registrarProducto(int codigos[], int cantidades[], int& cantidadItemsRegist
 double calcularSubtotalPedido(const int codigos[], const int cantidades[], int cantidadItemsRegistrados);
 
 /**
- * @brief Lee el tipo de usuario (estudiante, profesor, visitante).
+ * @brief Lee el tipo de usuario (estudiante, profesor, visitante, administrador).
  * @return Tipo de usuario seleccionado.
  */
 int leerTipoUsuario();
 
 /**
  * @brief Obtiene el porcentaje de descuento según el tipo de usuario.
- * @param tipoUsuario Tipo de usuario (estudiante, profesor, visitante).
+ * @param tipoUsuario Tipo de usuario (1=Estudiante, 2=Profesor, 3=Visitante, 4=Administrador).
  * @return Porcentaje de descuento correspondiente.
  */
 double obtenerPorcentajeDescuento(int tipoUsuario);
@@ -136,12 +141,12 @@ double calcularTotal(double subtotal, double porcentajeDescuento);
 void mostrarResumenPedido(const int codigos[], const int cantidades[], int cantidadItemsRegistrados,
                           double porcentajeDescuento);
 
-/**
- * @brief Carga un pedido de demostración con productos predefinidos.
- * @param codigos Arreglo de códigos de productos en el pedido.
- * @param cantidades Arreglo de cantidades de productos en el pedido.
- * @param cantidadItemsRegistrados Referencia al número de ítems registrados en el pedido.
- */
 void prediligenciarProductosDemo(int codigos[], int cantidades[], int& cantidadItemsRegistrados);
+
+
+void mostrarProductoMasCaro(const int codigos[], const int cantidades[], int cantidadItemsRegistrados);
+
+
+void eliminarProducto(int codigos[], int cantidades[], int& cantidadItemsRegistrados);
 
 #endif //CAFE_H
